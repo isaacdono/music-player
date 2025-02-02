@@ -45,13 +45,13 @@ next_song = False
 
 # Interrupt Handlers
 def toggle_pause(pin):
+    time.sleep_ms(300)
     global running
-    time.sleep_ms(200)
     running = not running  # Toggle play/pause
 
 def skip_song(pin):
+    time.sleep_ms(300)
     global next_song
-    time.sleep_ms(200)
     next_song = True  # Signal to skip song
 
 # Attach interrupts to buttons
@@ -84,7 +84,9 @@ def play_song(song):
             return
 
         while not running:  # Pause handling
-            time.sleep(0.1)
+            if next_song:
+                return
+            time.sleep(0.2)
 
         play_note(note, duration)
 
@@ -114,11 +116,11 @@ def music_player():
 
         if next_song:
             current_song_index = (current_song_index + 1) % len(songs)
+            running = True
             next_song = False
-            running = True  # Ensure new song starts playing
 
         pause_song()  # Ensure sound stops if paused
 
-        time.sleep(0.1)
+        time.sleep(0.2)
 
 music_player()
