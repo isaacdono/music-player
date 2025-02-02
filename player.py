@@ -42,15 +42,16 @@ songs = [mario_theme, imperial_march]
 # Global state variables
 running = False
 next_song = False
-current_song_index = 0
 
 # Interrupt Handlers
 def toggle_pause(pin):
     global running
+    time.sleep_ms(200)
     running = not running  # Toggle play/pause
 
 def skip_song(pin):
     global next_song
+    time.sleep_ms(200)
     next_song = True  # Signal to skip song
 
 # Attach interrupts to buttons
@@ -80,7 +81,6 @@ def play_song(song):
 
     for note, duration in song:
         if next_song:  # Skip song immediately
-            next_song = False
             return
 
         while not running:  # Pause handling
@@ -103,7 +103,8 @@ def display_menu():
 
 # Main Player Loop
 def music_player():
-    global running, current_song_index
+    global running, next_song
+    current_song_index = 0
 
     display_menu()
 
@@ -113,6 +114,7 @@ def music_player():
 
         if next_song:
             current_song_index = (current_song_index + 1) % len(songs)
+            next_song = False
             running = True  # Ensure new song starts playing
 
         pause_song()  # Ensure sound stops if paused
