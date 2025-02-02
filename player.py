@@ -13,9 +13,9 @@ NOTES = {
 
 # Define song (note, duration in ms)
 mario_theme = [
-    ("E5", 200), ("E5", 200), ("REST", 200), ("E5", 200),
-    ("REST", 200), ("C5", 200), ("E5", 200), ("G5", 400),
-    ("REST", 200), ("G4", 400)
+    ("E5", 125), ("E5", 125), ("REST", 125), ("E5", 125),
+    ("REST", 125), ("C5", 125), ("E5", 125), ("G5", 250),
+    ("REST", 125), ("G4", 250)
 ]
 
 # Function to play a note
@@ -26,7 +26,7 @@ def play_note(note, duration):
         buzzer1.freq(freq)
         buzzer2.freq(freq // 2)  # Second buzzer plays at half frequency
         buzzer1.duty_u16(20000)  # Activate buzzers
-        buzzer2.duty_u16(10000)
+        buzzer2.duty_u16(15000)
     else:
         buzzer1.duty_u16(0)  # Silence for rests
         buzzer2.duty_u16(0)
