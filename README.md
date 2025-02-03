@@ -2,7 +2,7 @@
 
 ## Introduction  
 
-This project runs on [BitDogLab](https://github.com/BitDogLab/BitDogLab), an educational STEM device equipped with a Raspberry Pi Pico W and various peripherals. You can read more about the platform [here](https://www.fee.unicamp.br/bitdoglab-a-revolucao-no-ensino-de-eletronica-programacao-e-iot/). Check this news. The goal is to play songs in an embedded environment using MicroPython, allowing real-time interaction through buttons for play/pause and song selection.
+This project runs on [BitDogLab](https://github.com/BitDogLab/BitDogLab), an educational STEM device equipped with a Raspberry Pi Pico W and various peripherals. You can read more about the platform [here](https://www.fee.unicamp.br/bitdoglab-a-revolucao-no-ensino-de-eletronica-programacao-e-iot/). The goal is to play songs in an embedded environment using MicroPython, allowing real-time interaction through buttons for play/pause and song selection.
 
 ### Hardware Components
 - RP2040 microcontroller (Raspberry Pi Pico W)
