@@ -1,4 +1,4 @@
-# Pico W Game Emulator  
+# Pico W Music Player
 
 ## Introduction  
 
