@@ -45,7 +45,7 @@ NOTES = {
     "REST": 0
 }
 
-# Mario Theme melody
+# Mario Theme 
 mario_theme = [
     ("E7", 125), ("E7", 125), ("REST", 125), ("E7", 125),
     ("REST", 125), ("C7", 125), ("E7", 125), ("REST", 125),
@@ -70,7 +70,7 @@ mario_theme = [
     ("B6", 125), ("REST", 250)
 ]
 
-# Imperial March Melody
+# Imperial March Theme
 imperial_march = [
     ("A4", 500), ("A4", 500), ("F4", 350), ("C5", 150),
     ("A4", 500), ("F4", 350), ("C5", 150), ("A4", 1000),
@@ -92,23 +92,8 @@ imperial_march = [
     ("F4", 375), ("C5", 125), ("A4", 1000)
 ]
 
-# Indiana Jones Theme
-indiana_jones = [
-    ("E4", 250), ("F#4", 250), ("G4", 500), ("C5", 250), ("E5", 500), ("A4", 250), ("B4", 250), ("C5", 500),
-    ("D5", 500), ("E5", 500), ("F5", 250), ("G5", 250), ("E5", 500), ("C5", 250), ("A4", 500), ("G4", 250),
-    ("E4", 500), ("F#4", 250), ("G4", 500), ("C5", 250), ("E5", 500), ("A4", 250), ("B4", 250), ("C5", 500),
-    
-    ("D5", 500), ("E5", 500), ("F5", 250), ("G5", 250), ("E5", 500), ("C5", 250), ("A4", 500), ("G4", 250),
-    ("E4", 500), ("G4", 500), ("C5", 500), ("B4", 250), ("A4", 250), ("G4", 500), ("E4", 250), ("F#4", 250),
-    ("G4", 500), ("C5", 250), ("E5", 500), ("A4", 250), ("B4", 250), ("C5", 500),
-
-    ("D5", 500), ("E5", 500), ("F5", 250), ("G5", 250), ("E5", 500), ("C5", 250), ("A4", 500), ("G4", 250),
-    ("E4", 500), ("G4", 500), ("C5", 500), ("B4", 250), ("A4", 250), ("G4", 500), ("E4", 250), ("F#4", 250),
-    ("G4", 500), ("C5", 250), ("E5", 500), ("A4", 250), ("B4", 250), ("C5", 500)
-]
-
 # List of available songs
-songs = [mario_theme, imperial_march, indiana_jones]
+songs = [mario_theme, imperial_march]
 
 # Global state variables
 running = False
@@ -136,8 +121,8 @@ def play_note(note, duration):
     if freq > 0:
         buzzer1.freq(freq)
         buzzer2.freq(freq // 2)  # Adds a harmonic undertone
-        buzzer1.duty_u16(20000)  # Softer duty cycle
-        buzzer2.duty_u16(10000)
+        buzzer1.duty_u16(12000)  # Softer duty cycle
+        buzzer2.duty_u16(6000)
 
     time.sleep_ms(duration)
 
@@ -151,6 +136,7 @@ def play_song(song):
     global running, next_song
 
     for note, duration in song:
+        clear_all()
         if next_song:  # Skip song immediately
             return
 
@@ -159,6 +145,7 @@ def play_song(song):
                 return
             time.sleep(0.2)
 
+        light_leds(note, duration)
         play_note(note, duration)
 
 # Stop sound
@@ -174,27 +161,68 @@ def display_menu():
     oled.text("B: Next Song", 10, 40)
     oled.show()
 
-# Note drawing on LED matrix
-def light_leds():
-    """Acende os LEDs em formato de cobra e maçã."""
+# Equalizer on LED matrix
+def light_leds(note, duration):
+    freq = NOTES[note]
 
-    colors = [
-        BLACK, BLACK, GREEN, GREEN, GREEN, # Mirrored sequence
-        BLACK, BLACK, GREEN, BLACK, BLACK, # Mirrored sequence
-        GREEN, GREEN, GREEN, BLACK, BLACK, # Mirrored sequence
-        BLACK, BLACK, BLACK, BLACK, GREEN,
-        RED, BLACK, BLACK, BLACK, BLACK
+    index = [
+        [4, 5, 14, 15, 24],  # Column 0
+        [3, 6, 13, 16, 23],  # Column 1
+        [2, 7, 12, 17, 22],  # Column 2
+        [1, 8, 11, 18, 21],  # Column 3
+        [0, 9, 10, 19, 20]   # Column 4
     ]
 
-    for i, color in enumerate(colors):
-        np[i] = color
+    # Determine the column based on frequency
+    if freq < 131:
+        column = 0
+    elif freq <= 261:
+        column = 1
+    elif freq < 521:
+        column = 2
+    elif freq < 1041:
+        column = 3
+    elif freq < 4187:
+        column = 4
+    else:
+        column = -1  # Out of range
+
+    # Determine intensity based on duration
+    if duration < 126:
+        intensity = 0
+    elif duration < 251:
+        intensity = 1
+    elif duration < 501:
+        intensity = 2
+    elif duration < 1001:
+        intensity = 3
+    else:
+        intensity = -1
+
+    if column == -1 or intensity == -1:
+        return  # Ignore invalid values
+
+    # Define the color pattern for each intensity level
+    color_patterns = [
+        [BLUE],  # Intensity 0
+        [BLUE, BLUE, MAGENTA],  # Intensity 1
+        [BLUE, BLUE, MAGENTA, MAGENTA, RED],  # Intensity 2
+        [BLUE, MAGENTA, MAGENTA, RED, RED] # Intensity 3
+    ]
+
+    # # Clear the column
+    # for i in range(5):
+    #     np[i * 5 + column] = BLACK
+
+    # Light up LEDs based on intensity level
+    colors = color_patterns[intensity]
+    for i in range(len(colors)):
+        np[index[column][i]] = colors[i]
 
     np.write()
 
 # Turn off LEDs
 def clear_all():
-    """Apaga os LEDs."""
-
     for i in range(len(np)):
         np[i] = BLACK
     np.write()
