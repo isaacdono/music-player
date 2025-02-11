@@ -101,12 +101,12 @@ next_song = False
 
 # Interrupt Handlers
 def toggle_pause(pin):
-    time.sleep_ms(300)
+    time.sleep_ms(350)
     global running
     running = not running  # Toggle play/pause
 
 def skip_song(pin):
-    time.sleep_ms(300)
+    time.sleep_ms(350)
     global next_song
     next_song = True  # Signal to skip song
 
@@ -205,8 +205,8 @@ def light_leds(note, duration):
     # Define the color pattern for each intensity level
     color_patterns = [
         [BLUE],  # Intensity 0
-        [BLUE, BLUE, MAGENTA],  # Intensity 1
-        [BLUE, BLUE, MAGENTA, MAGENTA, RED],  # Intensity 2
+        [BLUE, MAGENTA, MAGENTA],  # Intensity 1
+        [BLUE, MAGENTA, MAGENTA, RED],  # Intensity 2
         [BLUE, MAGENTA, MAGENTA, RED, RED] # Intensity 3
     ]
 
@@ -223,8 +223,7 @@ def light_leds(note, duration):
 
 # Turn off LEDs
 def clear_all():
-    for i in range(len(np)):
-        np[i] = BLACK
+    np.fill(BLACK)
     np.write()
 
 # Main Player Loop
